@@ -1,0 +1,26 @@
+{
+    "months": [
+        "Janar",
+        "Shkurt",
+        "Mars",
+        "Prill",
+        "Maj",
+        "Qershor",
+        "Korrik",
+        "Gusht",
+        "Shtator",
+        "Tetor",
+        "Nëntor",
+        "Dhjetor"
+    ],
+    "weekdays": [
+        "Die",
+        "Hën",
+        "Mar",
+        "Mër",
+        "Enj",
+        "Pre",
+        "Sht"
+    ],
+    "dateFormat": "dd.mm.yyyy."
+}

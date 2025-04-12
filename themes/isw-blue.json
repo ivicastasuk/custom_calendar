@@ -1,0 +1,17 @@
+{
+  "calendarBackground": "#e5f0ff",
+  "headerBackground": "#cce0ff",
+  "headerTextColor": "#003366",
+  "cellBackground": "#ffffff",
+  "cellColor": "#003366",
+  "cellTextColor": "#003366",
+  "dayHeaderBackground": "#99ccff",
+  "dayHeaderColor": "#002244",
+  "dayHeaderTextColor": "#002244",
+  "textColor": "#003366",
+  "dropdownBackground": "#cce0ff",
+  "dropdownTextColor": "#003366",
+  "dropdownHoverBackground": "#6699ff",
+  "cellHoverOutlineColor": "#0044cc",
+  "otherMonthOutlineColor": "#ff0000"
+}

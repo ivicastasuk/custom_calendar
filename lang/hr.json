@@ -1,0 +1,26 @@
+{
+    "months": [
+        "Siječanj",
+        "Veljača",
+        "Ožujak",
+        "Travanj",
+        "Svibanj",
+        "Lipanj",
+        "Srpanj",
+        "Kolovoz",
+        "Rujan",
+        "Listopad",
+        "Studeni",
+        "Prosinac"
+    ],
+    "weekdays": [
+        "Ned",
+        "Pon",
+        "Uto",
+        "Sri",
+        "Čet",
+        "Pet",
+        "Sub"
+    ],
+    "dateFormat": "dd. MM, yyyy."
+}

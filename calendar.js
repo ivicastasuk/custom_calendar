@@ -5,32 +5,28 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    // Get language from data-lang attribute; default to 'en'
+    // Get language and theme from attributes; default values if not provided.
     const lang = calendarContainer.getAttribute('data-lang') || 'en';
+    const themeName = calendarContainer.getAttribute('data-theme') || 'default';
+    const size = calendarContainer.getAttribute('data-size') || 'md';
+    calendarContainer.classList.add(`calendar-${size}`);
 
     // Default current date settings
     let currentDate = new Date();
     let selectedMonth = currentDate.getMonth();
     let selectedYear = currentDate.getFullYear();
-    // Initially, the selected date is today
     let selectedDate = new Date(currentDate);
 
     let monthNames = [];
     let weekdayNames = [];
-    // Default format if not provided in JSON
     let dateFormat = "yyyy-mm-dd";
+    let currentTheme = {}; // Global variable to store the current theme
 
-    // Helper function to format date according to a format string.
-    // Supported tokens: dd, mm, yyyy
     function formatDate(date, format) {
         const day = ("0" + date.getDate()).slice(-2);
         const numericMonth = ("0" + (date.getMonth() + 1)).slice(-2);
-        // Use localized month name from monthNames; fallback to numeric month if not available
         const monthName = monthNames[ date.getMonth() ] || numericMonth;
         const year = date.getFullYear();
-
-        // Replace tokens. Order matters: replace "yyyy" and "dd" first,
-        // then replace "MM" (month name) before replacing "mm" (numeric month).
         let formatted = format;
         formatted = formatted.replace(/yyyy/g, year)
             .replace(/dd/g, day)
@@ -39,15 +35,9 @@ document.addEventListener('DOMContentLoaded', function () {
         return formatted;
     }
 
-    // Function to load localized month and weekday names from a JSON file;
-    // JSON file is expected to have the format:
-    // {
-    //   "months": ["January", "February", ...],
-    //   "weekdays": ["Sun", "Mon", ...],
-    //   "dateFormat": "dd/mm/yyyy"  // optional
-    // }
+    // Load language JSON
     function loadLocalizedMonths() {
-        return fetch(`${lang}.json`)
+        return fetch(`./lang/${lang}.json`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`Could not load language file for ${lang}`);
@@ -62,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.weekdays && Array.isArray(data.weekdays)) {
                     weekdayNames = data.weekdays;
                 } else {
-                    // Fallback to English abbreviations if not provided
                     weekdayNames = [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ];
                 }
                 if (data.dateFormat) {
@@ -71,55 +60,102 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => {
                 console.error(error);
-                // Fallback to English if language file is not found or invalid
-                monthNames = [
-                    'January', 'February', 'March', 'April', 'May', 'June',
-                    'July', 'August', 'September', 'October', 'November', 'December'
-                ];
+                monthNames = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
                 weekdayNames = [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ];
             });
     }
 
+    // Load theme JSON based on data-theme attribute.
+    function loadTheme(theme) {
+        return fetch(`./themes/${theme}.json`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Could not load theme file for ${theme}`);
+                }
+                return response.json();
+            })
+            .catch(error => {
+                console.error(error);
+                return {}; // Fallback to no theme settings
+            });
+    }
+
+    // Apply theme settings by creating a dynamic style tag.
+    function applyTheme(themeSettings) {
+        let cssRules = "";
+        if (themeSettings.calendarBackground) {
+            cssRules += `.calendar { background-color: ${themeSettings.calendarBackground}; } `;
+        }
+        if (themeSettings.textColor) { // overall text color
+            cssRules += `.calendar { color: ${themeSettings.textColor}; } `;
+        }
+        if (themeSettings.headerBackground) {
+            cssRules += `.calendar-header { background-color: ${themeSettings.headerBackground}; } `;
+        }
+        if (themeSettings.headerTextColor) {
+            cssRules += `.calendar-header { color: ${themeSettings.headerTextColor}; } `;
+        }
+        if (themeSettings.cellBackground) {
+            cssRules += `.calendar-cell { background-color: ${themeSettings.cellBackground}; } `;
+        }
+        if (themeSettings.cellColor) {
+            cssRules += `.calendar-cell { color: ${themeSettings.cellColor}; } `;
+        }
+        if (themeSettings.cellTextColor) { // additional support for cell text color
+            cssRules += `.calendar-cell { color: ${themeSettings.cellTextColor}; } `;
+        }
+        if (themeSettings.dayHeaderBackground) {
+            cssRules += `.calendar-day-header { background-color: ${themeSettings.dayHeaderBackground}; } `;
+        }
+        if (themeSettings.dayHeaderColor) {
+            cssRules += `.calendar-day-header { color: ${themeSettings.dayHeaderColor}; } `;
+        }
+        if (themeSettings.dayHeaderTextColor) { // additional support for day header text color
+            cssRules += `.calendar-day-header { color: ${themeSettings.dayHeaderTextColor}; } `;
+        }
+        // Dropdown support: set background, text color, and hover background for dropdown items
+        if (themeSettings.dropdownBackground) {
+            cssRules += `.dropdown-item { background-color: ${themeSettings.dropdownBackground}; } `;
+        }
+        if (themeSettings.dropdownTextColor) {
+            cssRules += `.dropdown-item { color: ${themeSettings.dropdownTextColor}; } `;
+        }
+        if (themeSettings.dropdownHoverBackground) {
+            cssRules += `.dropdown-item:hover { background-color: ${themeSettings.dropdownHoverBackground} !important; } `;
+        }
+
+        if (cssRules) {
+            const styleTag = document.createElement('style');
+            styleTag.textContent = cssRules;
+            document.head.appendChild(styleTag);
+        }
+    }
+
     function renderCalendar(month, year) {
-        // Clear existing calendar content
         calendarContainer.innerHTML = '';
-        // Use the formatDate helper to format the selected date
         calendarContainer.setAttribute('selected-date', formatDate(selectedDate, dateFormat));
 
-        // Create header for month navigation and title container
         const headerDiv = document.createElement('div');
         headerDiv.className = 'calendar-header';
-        headerDiv.style.position = 'relative'; // for positioning dropdowns
+        headerDiv.style.position = 'relative';
 
         const prevButton = document.createElement('button');
         prevButton.textContent = '<';
         prevButton.addEventListener('click', function () {
-            if (month === 0) {
-                month = 11;
-                year--;
-            } else {
-                month--;
-            }
+            month === 0 ? (month = 11, year--) : month--;
             renderCalendar(month, year);
         });
 
         const nextButton = document.createElement('button');
         nextButton.textContent = '>';
         nextButton.addEventListener('click', function () {
-            if (month === 11) {
-                month = 0;
-                year++;
-            } else {
-                month++;
-            }
+            month === 11 ? (month = 0, year++) : month++;
             renderCalendar(month, year);
         });
 
-        // Create container for month and year spans
         const titleContainer = document.createElement('div');
         titleContainer.style.display = 'inline-block';
 
-        // Month span with dropdown functionality
         const monthSpan = document.createElement('span');
         monthSpan.textContent = monthNames[ month ];
         monthSpan.style.cursor = 'pointer';
@@ -140,6 +176,9 @@ document.addEventListener('DOMContentLoaded', function () {
             dropdown.style.backgroundColor = '#fff';
             dropdown.style.zIndex = '10';
             dropdown.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+            // Ensure dropdown fits within the calendar container
+            dropdown.style.width = calendarContainer.offsetWidth + "px";
+            dropdown.style.boxSizing = "border-box";
 
             monthNames.forEach(function (m, index) {
                 const item = document.createElement('div');
@@ -147,26 +186,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 item.textContent = m;
                 item.style.padding = '5px 10px';
                 item.style.cursor = 'pointer';
+                // Center the text in each dropdown item
+                item.style.textAlign = 'center';
                 item.addEventListener('click', function () {
                     selectedMonth = index;
                     dropdown.remove();
                     renderCalendar(selectedMonth, year);
-                });
-                item.addEventListener('mouseover', function () {
-                    item.style.backgroundColor = '#f0f0f0';
-                });
-                item.addEventListener('mouseout', function () {
-                    item.style.backgroundColor = '#fff';
                 });
                 dropdown.appendChild(item);
             });
             headerDiv.appendChild(dropdown);
         });
 
-        // Space node between month and year
         const spaceText = document.createTextNode(' ');
 
-        // Year span with dropdown functionality
         const yearSpan = document.createElement('span');
         yearSpan.textContent = year;
         yearSpan.style.cursor = 'pointer';
@@ -189,6 +222,9 @@ document.addEventListener('DOMContentLoaded', function () {
             dropdown.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
             dropdown.style.maxHeight = '200px';
             dropdown.style.overflowY = 'auto';
+            // Ensure dropdown fits within the calendar container
+            dropdown.style.width = calendarContainer.offsetWidth + "px";
+            dropdown.style.boxSizing = "border-box";
 
             for (let yr = 1901; yr <= 2099; yr++) {
                 const item = document.createElement('div');
@@ -196,16 +232,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 item.textContent = yr;
                 item.style.padding = '5px 10px';
                 item.style.cursor = 'pointer';
+                // Center the text in each dropdown item
+                item.style.textAlign = 'center';
                 item.addEventListener('click', function () {
                     selectedYear = yr;
                     dropdown.remove();
                     renderCalendar(month, selectedYear);
-                });
-                item.addEventListener('mouseover', function () {
-                    item.style.backgroundColor = '#f0f0f0';
-                });
-                item.addEventListener('mouseout', function () {
-                    item.style.backgroundColor = '#fff';
                 });
                 dropdown.appendChild(item);
             }
@@ -227,16 +259,10 @@ document.addEventListener('DOMContentLoaded', function () {
         headerDiv.appendChild(nextButton);
         calendarContainer.appendChild(headerDiv);
 
-        // Create calendar grid container
         const grid = document.createElement('div');
         grid.className = 'calendar-grid';
 
-        // Reorder weekday names so that Monday is the first day.
-        // For example, if weekdayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
-        // then orderedWeekdays becomes ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].
         const orderedWeekdays = weekdayNames.slice(1).concat(weekdayNames[ 0 ]);
-
-        // Render localized weekday headers (starting with Monday)
         orderedWeekdays.forEach(function (day) {
             const dayHeader = document.createElement('div');
             dayHeader.className = 'calendar-day-header';
@@ -244,79 +270,86 @@ document.addEventListener('DOMContentLoaded', function () {
             grid.appendChild(dayHeader);
         });
 
-        // Calculate first day index with Monday as first day.
-        // JavaScript's getDay() returns 0 for Sunday, 1 for Monday, etc.
-        // So if getDay() returns 0, set to 6; otherwise subtract 1.
         let firstDayIndex = new Date(year, month, 1).getDay();
         firstDayIndex = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
 
-        // Get number of days in current month
         const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-        // Fill cells from previous month
         const prevMonth = month === 0 ? 11 : month - 1;
         const prevYear = month === 0 ? year - 1 : year;
         const daysInPrevMonth = new Date(prevYear, prevMonth + 1, 0).getDate();
 
+        // Inside renderCalendar, for previous month days:
         for (let i = 0; i < firstDayIndex; i++) {
             const dayNum = daysInPrevMonth - firstDayIndex + i + 1;
             const otherCell = document.createElement('div');
             otherCell.className = 'calendar-cell other-month';
             otherCell.textContent = dayNum;
-            // When clicking an other-month day, update selectedDate but do NOT change the displayed month.
             otherCell.addEventListener('click', function () {
                 selectedDate = new Date(prevYear, prevMonth, dayNum, 12);
                 calendarContainer.setAttribute('selected-date', formatDate(selectedDate, dateFormat));
-                renderCalendar(month, year); // keep current month/year
+                renderCalendar(month, year);
+            });
+            // Add outline on hover only for dates outside the current month
+            otherCell.addEventListener('mouseover', function () {
+                otherCell.style.outline = currentTheme && currentTheme.otherMonthOutlineColor ?
+                    `2px solid ${currentTheme.otherMonthOutlineColor}` : "2px dashed #ccc";
+            });
+            otherCell.addEventListener('mouseout', function () {
+                otherCell.style.outline = "";
             });
             grid.appendChild(otherCell);
         }
 
-        // Create day cells for each day of the current month
         for (let day = 1; day <= daysInMonth; day++) {
             const dayCell = document.createElement('div');
             dayCell.className = 'calendar-cell';
             dayCell.textContent = day;
-
-            // Highlight today's date
-            if (
-                day === currentDate.getDate() &&
-                month === currentDate.getMonth() &&
-                year === currentDate.getFullYear()
-            ) {
+            if (day === currentDate.getDate() && month === currentDate.getMonth() && year === currentDate.getFullYear()) {
                 dayCell.classList.add('today');
             }
-            // Highlight the selected day
-            if (
-                day === selectedDate.getDate() &&
-                month === selectedDate.getMonth() &&
-                year === selectedDate.getFullYear()
-            ) {
+            if (day === selectedDate.getDate() && month === selectedDate.getMonth() && year === selectedDate.getFullYear()) {
                 dayCell.classList.add('selected');
             }
-            // Update calendar attribute when a day is selected
             dayCell.addEventListener('click', function () {
                 selectedDate = new Date(year, month, day, 12);
                 calendarContainer.setAttribute('selected-date', formatDate(selectedDate, dateFormat));
                 renderCalendar(month, year);
             });
+
+            // Add mouseover and mouseout events for hover outline
+            dayCell.addEventListener('mouseover', function () {
+                // Use the cellHoverOutlineColor from themeSettings if defined; fallback to bright yellow
+                dayCell.style.outline = currentTheme && currentTheme.cellHoverOutlineColor ?
+                    `2px solid ${currentTheme.cellHoverOutlineColor}` : "2px solid #ff0";
+            });
+            dayCell.addEventListener('mouseout', function () {
+                dayCell.style.outline = "";
+            });
+
             grid.appendChild(dayCell);
         }
 
-        // Fill remaining cells with days from next month, if needed
         const totalCells = grid.children.length;
         const trailingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+        // And in the trailing cells loop (next month days):
         for (let j = 1; j <= trailingCells; j++) {
             const otherCell = document.createElement('div');
             otherCell.className = 'calendar-cell other-month';
             otherCell.textContent = j;
-            // When clicking an other-month day of the next month, update the selection
             otherCell.addEventListener('click', function () {
                 let nextMonth = month === 11 ? 0 : month + 1;
                 let nextYear = month === 11 ? year + 1 : year;
                 selectedDate = new Date(nextYear, nextMonth, j, 12);
                 calendarContainer.setAttribute('selected-date', formatDate(selectedDate, dateFormat));
-                renderCalendar(month, year); // do not switch display to next month
+                renderCalendar(month, year);
+            });
+            // Add outline on hover only for dates outside the current month
+            otherCell.addEventListener('mouseover', function () {
+                otherCell.style.outline = currentTheme && currentTheme.otherMonthOutlineColor ?
+                    `2px solid ${currentTheme.otherMonthOutlineColor}` : "2px dashed #ccc";
+            });
+            otherCell.addEventListener('mouseout', function () {
+                otherCell.style.outline = "";
             });
             grid.appendChild(otherCell);
         }
@@ -324,7 +357,6 @@ document.addEventListener('DOMContentLoaded', function () {
         calendarContainer.appendChild(grid);
     }
 
-    // Close any open dropdowns when clicking outside
     document.addEventListener('click', function () {
         const monthDropdown = document.querySelector('.month-dropdown');
         if (monthDropdown) {
@@ -336,8 +368,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Load localized month and weekday names, then render the calendar
-    loadLocalizedMonths().then(function () {
+    // Load language and theme then render calendar
+    Promise.all([ loadLocalizedMonths(), loadTheme(themeName) ]).then(function (results) {
+        currentTheme = results[ 1 ]; // Global variable to be used in renderCalendar
+        if (Object.keys(currentTheme).length > 0) {
+            applyTheme(currentTheme);
+        }
         renderCalendar(selectedMonth, selectedYear);
     });
 });

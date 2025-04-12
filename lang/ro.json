@@ -1,0 +1,26 @@
+{
+    "months": [
+        "Ianuarie",
+        "Februarie",
+        "Martie",
+        "Aprilie",
+        "Mai",
+        "Iunie",
+        "Iulie",
+        "August",
+        "Septembrie",
+        "Octombrie",
+        "Noiembrie",
+        "Decembrie"
+    ],
+    "weekdays": [
+        "Lu",
+        "Ma",
+        "Mi",
+        "Jo",
+        "Vi",
+        "Sâ",
+        "Du"
+    ],
+    "dateFormat": "dd.mm.yyyy."
+}
