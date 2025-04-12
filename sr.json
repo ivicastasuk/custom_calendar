@@ -1,0 +1,26 @@
+{
+    "months": [
+        "Januar",
+        "Februar",
+        "Mart",
+        "April",
+        "Maj",
+        "Jun",
+        "Jul",
+        "Avgust",
+        "Septembar",
+        "Oktobar",
+        "Novembar",
+        "Decembar"
+    ],
+    "weekdays": [
+        "Ned",
+        "Pon",
+        "Uto",
+        "Sre",
+        "Čet",
+        "Pet",
+        "Sub"
+    ],
+    "dateFormat": "dd. MM. yyyy."
+}
