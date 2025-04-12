@@ -5,13 +5,13 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    // Get language and theme from attributes; default values if not provided.
+    // Preuzmi jezik i temu iz atributa; podrazumevane vrednosti ako nisu navedene.
     const lang = calendarContainer.getAttribute('data-lang') || 'en';
     const themeName = calendarContainer.getAttribute('data-theme') || 'default';
     const size = calendarContainer.getAttribute('data-size') || 'md';
     calendarContainer.classList.add(`calendar-${size}`);
 
-    // Default current date settings
+    // Podešavanja za podrazumevani trenutni datum
     let currentDate = new Date();
     let selectedMonth = currentDate.getMonth();
     let selectedYear = currentDate.getFullYear();
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let monthNames = [];
     let weekdayNames = [];
     let dateFormat = "yyyy-mm-dd";
-    let currentTheme = {}; // Global variable to store the current theme
+    let currentTheme = {}; // Globalna promenljiva za čuvanje trenutne teme
 
     function formatDate(date, format) {
         const day = ("0" + date.getDate()).slice(-2);
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return formatted;
     }
 
-    // Load language JSON
+    // Učitaj JSON za jezik
     function loadLocalizedMonths() {
         return fetch(`./lang/${lang}.json`)
             .then(response => {
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    // Load theme JSON based on data-theme attribute.
+    // Učitaj JSON teme na osnovu atributa data-theme.
     function loadTheme(theme) {
         return fetch(`./themes/${theme}.json`)
             .then(response => {
@@ -76,17 +76,17 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => {
                 console.error(error);
-                return {}; // Fallback to no theme settings
+                return {}; // Rezervna opcija ako podešavanja teme nisu dostupna
             });
     }
 
-    // Apply theme settings by creating a dynamic style tag.
+    // Primeni podešavanja teme kreiranjem dinamičke style oznake.
     function applyTheme(themeSettings) {
         let cssRules = "";
         if (themeSettings.calendarBackground) {
             cssRules += `.calendar { background-color: ${themeSettings.calendarBackground}; } `;
         }
-        if (themeSettings.textColor) { // overall text color
+        if (themeSettings.textColor) { // Opšta boja teksta
             cssRules += `.calendar { color: ${themeSettings.textColor}; } `;
         }
         if (themeSettings.headerBackground) {
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (themeSettings.cellColor) {
             cssRules += `.calendar-cell { color: ${themeSettings.cellColor}; } `;
         }
-        if (themeSettings.cellTextColor) { // additional support for cell text color
+        if (themeSettings.cellTextColor) { // Dodatna podrška za boju teksta u ćelijama
             cssRules += `.calendar-cell { color: ${themeSettings.cellTextColor}; } `;
         }
         if (themeSettings.dayHeaderBackground) {
@@ -110,10 +110,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (themeSettings.dayHeaderColor) {
             cssRules += `.calendar-day-header { color: ${themeSettings.dayHeaderColor}; } `;
         }
-        if (themeSettings.dayHeaderTextColor) { // additional support for day header text color
+        if (themeSettings.dayHeaderTextColor) { // Dodatna podrška za boju teksta zaglavlja dana
             cssRules += `.calendar-day-header { color: ${themeSettings.dayHeaderTextColor}; } `;
         }
-        // Dropdown support: set background, text color, and hover background for dropdown items
+        // Podrška za padajući meni: postavi pozadinu, boju teksta i pozadinu pri prelasku mišem za stavke menija
         if (themeSettings.dropdownBackground) {
             cssRules += `.dropdown-item { background-color: ${themeSettings.dropdownBackground}; } `;
         }
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
             dropdown.style.backgroundColor = '#fff';
             dropdown.style.zIndex = '10';
             dropdown.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-            // Ensure dropdown fits within the calendar container
+            // Obezbedi da padajući meni bude unutar kontejnera kalendara
             dropdown.style.width = calendarContainer.offsetWidth + "px";
             dropdown.style.boxSizing = "border-box";
 
@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 item.textContent = m;
                 item.style.padding = '5px 10px';
                 item.style.cursor = 'pointer';
-                // Center the text in each dropdown item
+                // Centriraj tekst u svakoj stavci padajućeg menija
                 item.style.textAlign = 'center';
                 item.addEventListener('click', function () {
                     selectedMonth = index;
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function () {
             dropdown.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
             dropdown.style.maxHeight = '200px';
             dropdown.style.overflowY = 'auto';
-            // Ensure dropdown fits within the calendar container
+            // Obezbedi da padajući meni stane unutar kontejnera kalendara
             dropdown.style.width = calendarContainer.offsetWidth + "px";
             dropdown.style.boxSizing = "border-box";
 
@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 item.textContent = yr;
                 item.style.padding = '5px 10px';
                 item.style.cursor = 'pointer';
-                // Center the text in each dropdown item
+                // Centriraj tekst u svakoj stavci padajućeg menija
                 item.style.textAlign = 'center';
                 item.addEventListener('click', function () {
                     selectedYear = yr;
@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const prevYear = month === 0 ? year - 1 : year;
         const daysInPrevMonth = new Date(prevYear, prevMonth + 1, 0).getDate();
 
-        // Inside renderCalendar, for previous month days:
+        // Unutar funkcije renderCalendar, za dane iz prethodnog meseca
         for (let i = 0; i < firstDayIndex; i++) {
             const dayNum = daysInPrevMonth - firstDayIndex + i + 1;
             const otherCell = document.createElement('div');
@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 calendarContainer.setAttribute('selected-date', formatDate(selectedDate, dateFormat));
                 renderCalendar(month, year);
             });
-            // Add outline on hover only for dates outside the current month
+            // Dodaj obris (outline) pri prelasku mišem samo za datume van tekućeg meseca
             otherCell.addEventListener('mouseover', function () {
                 otherCell.style.outline = currentTheme && currentTheme.otherMonthOutlineColor ?
                     `2px solid ${currentTheme.otherMonthOutlineColor}` : "2px dashed #ccc";
@@ -316,9 +316,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 renderCalendar(month, year);
             });
 
-            // Add mouseover and mouseout events for hover outline
+            // Dodaj događaje mouseover i mouseout za prikaz obrisa pri prelasku mišem
             dayCell.addEventListener('mouseover', function () {
-                // Use the cellHoverOutlineColor from themeSettings if defined; fallback to bright yellow
+                // Koristi cellHoverOutlineColor iz themeSettings ako je definisano; u suprotnom koristi jarko žutu kao rezervnu vrednost
                 dayCell.style.outline = currentTheme && currentTheme.cellHoverOutlineColor ?
                     `2px solid ${currentTheme.cellHoverOutlineColor}` : "2px solid #ff0";
             });
@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const totalCells = grid.children.length;
         const trailingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
-        // And in the trailing cells loop (next month days):
+        // I u petlji za završne ćelije (dani sledećeg meseca):
         for (let j = 1; j <= trailingCells; j++) {
             const otherCell = document.createElement('div');
             otherCell.className = 'calendar-cell other-month';
@@ -343,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 calendarContainer.setAttribute('selected-date', formatDate(selectedDate, dateFormat));
                 renderCalendar(month, year);
             });
-            // Add outline on hover only for dates outside the current month
+            // Dodaj obris pri prelasku mišem samo za datume koji nisu iz tekućeg meseca
             otherCell.addEventListener('mouseover', function () {
                 otherCell.style.outline = currentTheme && currentTheme.otherMonthOutlineColor ?
                     `2px solid ${currentTheme.otherMonthOutlineColor}` : "2px dashed #ccc";
@@ -368,9 +368,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Load language and theme then render calendar
+    // Učitaj jezik i temu, a zatim prikaži kalendar
     Promise.all([ loadLocalizedMonths(), loadTheme(themeName) ]).then(function (results) {
-        currentTheme = results[ 1 ]; // Global variable to be used in renderCalendar
+        currentTheme = results[ 1 ]; // Globalna promenljiva koja se koristi u funkciji renderCalendar
         if (Object.keys(currentTheme).length > 0) {
             applyTheme(currentTheme);
         }

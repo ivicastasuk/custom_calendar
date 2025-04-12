@@ -71,7 +71,7 @@
     cursor: pointer;
 }
 
-/* Calendar container size variations */
+/* Varijacije veličina za kalendar */
 .calendar-sm {
     font-size: 0.8em;
     min-width: 250px;
@@ -97,7 +97,7 @@
     min-width: 450px;
 }
 
-/* Adjust header buttons and cell padding proportionally */
+/* Podešavanje dugmića u zaglavlju i padding ćelija proporcionalno */
 .calendar-sm .calendar-header button,
 .calendar-sm .calendar-cell {
     padding: 5px;
