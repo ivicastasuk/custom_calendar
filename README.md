@@ -1,55 +1,190 @@
-# Custom Calendar
 
-## Opis
-Custom Calendar je prilagodljivi kalendar implementiran pomoću HTML, CSS i JavaScript. Projekat omogućava prikaz meseca sa lokalizovanim nazivima meseci i skraćenim danima u nedelji, kao i napredne mogućnosti prilagođavanja izgleda pomoću tema definisanih u JSON fajlovima. Kalendar podržava prikaz dana iz prethodnog i narednog meseca, pri čemu se dani koji ne pripadaju tekućem mesecu ističu (na hover) outline-om jedne kontrastne boje. Takođe, interaktivni padajući meniji za izbor meseca i godine prilagođavaju se izabranoj temi.
+# 📅 Custom Calendar
 
-## Karakteristike
-- **Lokalizacija** – Nazivi meseci i skraćeni nazivi dana se učitavaju iz odgovarajućeg JSON fajla. Jezik se menja jednostavnom promenom `data-lang` atributa na `.calendar` elementu.
-- **Prilagodljivo formatiranje datuma** – Format datuma se definiše u JSON fajlu pomoću opcije `dateFormat`. Podržani formati su, između ostalog:
+## 📌 Opis  
+**Custom Calendar** je prilagodljivi kalendar izrađen pomoću **HTML**, **CSS** i **JavaScript**. Omogućava lokalizovan prikaz meseca i dana u nedelji, kao i detaljno prilagođavanje izgleda pomoću tema definisanih u **JSON** fajlovima.
+
+### ✨ Glavne karakteristike
+- 🌍 **Lokalizacija**  
+  Učitavanje naziva meseci i dana u nedelji iz `lang` JSON fajla prema atributu `data-lang`.
+  
+- 🗓 **Fleksibilni formati datuma**  
+  Podržani formati uključuju:
   - `dd.mm.yyyy.`
   - `dd/mm/yyyy`
   - `dd-mm-yyyy`
   - `yyyy-mm-dd`
   - `mm-dd-yyyy`
-  - `dd. MM, yyyy.` *(gde je MM naziv meseca)*
-  - `MM dd, yyyy` *(gde je MM naziv meseca)*
-- **Teme i prilagođavanje izgleda** – Svi elementi kalendara, uključujući zaglavlja, ćelije, padajuće menije i outline hover efekat, se stilizuju pomoću teme koja se učitava iz JSON fajla. Tema definiše i boje pozadine, boje teksta, kao i specifične opcije kao što su:
-  - `dropdownBackground`, `dropdownTextColor` i `dropdownHoverBackground` – za podešavanje izgleda padajućih menija
-  - `cellHoverOutlineColor` – boja outline efekta kada se prelazi mišem preko ćelije
-  - `otherMonthOutlineColor` – boja outline efekta (na hover) za dane koji ne pripadaju trenutnom mesecu
-- **Interaktivni korisnički interfejs** – Klikabilni elementi (dugmadi za navigaciju, padajući meniji za mesec i godinu) omogućavaju lako biranje datuma. Klikom na dan ažurira se atribut `selected-date` na `.calendar` elementu.
-- **Prikaz susednih meseci** – Ukoliko postoje prazna polja u prikazu kalendara, ona se popunjavaju danima iz prethodnog i narednog meseca, koji se prikazuju svetlijom bojom, a dani izvan tekućeg meseca dobijaju hover outline radi bolje vidljivosti.
+  - `dd. MM, yyyy.` *(npr. 12. April, 2025.)*
+  - `MM dd, yyyy` *(April 12, 2025)*
 
-## Instalacija
-1. Klonirajte repozitorijum:
-   ```sh
-   git clone https://github.com/vas-korisnicki-nalog/custom_calendar.git
-   ```
-2. Otvorite projekat u Visual Studio Code ili omiljenom editoru.
-3. Pokrenite `index.html` fajl u pretraživaču.
+- 🎨 **Teme i stilizacija**  
+  Tema definiše izgled svih elemenata kalendara kroz JSON fajl:
+  - `dropdownBackground`, `dropdownTextColor`, `dropdownHoverBackground`
+  - `cellHoverOutlineColor`, `otherMonthOutlineColor`
 
-## Konfiguracija
-- **Promena jezika:**  
-  Postavite `data-lang` atribut na `.calendar` elementu na željeni jezik (npr. `en`, `sr`, `de` itd.) i kreirajte odgovarajući JSON fajl (npr. `sr.json`) koji sadrži:
-  ```json
-  {
-    "months": ["Januar", "Februar", "Mart", "April", "Maj", "Jun", "Jul", "Avgust", "Septembar", "Oktobar", "Novembar", "Decembar"],
-    "weekdays": ["Ned", "Pon", "Uto", "Sre", "Čet", "Pet", "Sub"],
-    "dateFormat": "dd. MM, yyyy."
-  }
-  ```
-- **Izbor teme:**  
-  Tema se menja postavljanjem `data-theme` atributa na `.calendar` elementu. Teme se učitavaju iz JSON fajlova u folderu `themes`. U njima se definišu opcije za boje pozadine, boje teksta, kao i stilovi za padajuće menije i outline efekat na hover.
-- **Prilagođavanje izgleda:**  
-  Stilovi se dalje mogu prilagoditi u `style.css` fajlu, gde su definisane varijacije veličina kalendara i proporcije paddinga za različite veličine.
+- 🧭 **Interaktivan UI**  
+  Padajući meniji za izbor meseca i godine, navigacija između meseci, klikabilni dani koji ažuriraju `selected-date` atribut.
 
-## Kako koristiti
-1. Prilagodite jezik i temu iz atributa na `.calendar` elementu u `index.html`.
-2. Klikom na naziv meseca ili godine otvorite padajući meni i izaberite željenu vrednost.
-3. Klikom na dan označite selektovani datum; datum se čuva kao atribut `selected-date` na `.calendar` elementu.
-4. Kada pređete mišem preko dana koji ne pripadaju trenutnom mesecu, prikazuje se outline u kontrastnoj boji definisanoj u temi.
+- 🗓️ **Prikaz dana iz susednih meseci**  
+  Popunjavanje praznih ćelija danima iz prethodnog i sledećeg meseca, uz vizuelno razlikovanje i hover efekat (outline).
 
-## Autorstvo
-Ovaj projekat je besplatan i može se prilagoditi prema potrebama.  
-Ukoliko imate bilo kakvih pitanja ili pronađete greške, slobodno otvorite "issue" u repozitorijumu.
+---
 
+## 🔧 Instalacija
+
+```bash
+git clone https://github.com/vas-korisnicki-nalog/custom_calendar.git
+```
+
+Zatim otvorite `index.html` u pretraživaču.
+
+---
+
+## ⚙️ Konfiguracija
+
+### 📌 Jezik
+
+```html
+<div class="calendar" data-lang="sr"></div>
+```
+
+**sr.json**
+```json
+{
+  "months": ["Januar", "Februar", "Mart", "April", "Maj", "Jun", "Jul", "Avgust", "Septembar", "Oktobar", "Novembar", "Decembar"],
+  "weekdays": ["Ned", "Pon", "Uto", "Sre", "Čet", "Pet", "Sub"],
+  "dateFormat": "dd. MM, yyyy."
+}
+```
+
+### 🎨 Tema
+
+```html
+<div class="calendar" data-theme="dark"></div>
+```
+
+**dark.json**
+```json
+{
+  "dropdownBackground": "#222",
+  "dropdownTextColor": "#fff",
+  "dropdownHoverBackground": "#444",
+  "cellHoverOutlineColor": "#ff0",
+  "otherMonthOutlineColor": "#f0f"
+}
+```
+
+---
+
+## 🚀 Kako koristiti
+
+1. Postavite `data-lang` i `data-theme` atribute.
+2. Klikom na mesec/godinu otvorite meni i izaberite.
+3. Klikom na dan ažurira se `selected-date`.
+4. Hover outline za dane van trenutnog meseca se koristi iz teme.
+
+---
+
+## 👨‍💻 Autorstvo
+
+Ovaj projekat je **open-source** i može se slobodno koristiti i prilagođavati.  
+Za pitanja ili predloge, otvorite novi **issue**.
+
+---
+
+---
+
+# 📅 Custom Calendar (English)
+
+## 📌 Description  
+**Custom Calendar** is a customizable calendar implemented using **HTML**, **CSS**, and **JavaScript**. It supports localized month/day names and advanced theming through JSON configuration files.
+
+### ✨ Features
+- 🌍 **Localization**  
+  Month and weekday names are loaded from a `lang` JSON file based on the `data-lang` attribute.
+
+- 🗓 **Flexible date formats**  
+  Supported formats include:
+  - `dd.mm.yyyy.`
+  - `dd/mm/yyyy`
+  - `dd-mm-yyyy`
+  - `yyyy-mm-dd`
+  - `mm-dd-yyyy`
+  - `dd. MM, yyyy.` *(e.g., 12. April, 2025.)*
+  - `MM dd, yyyy` *(e.g., April 12, 2025)*
+
+- 🎨 **Theming support**  
+  Theme JSON files control the appearance of calendar elements:
+  - `dropdownBackground`, `dropdownTextColor`, `dropdownHoverBackground`
+  - `cellHoverOutlineColor`, `otherMonthOutlineColor`
+
+- 🧭 **Interactive UI**  
+  Dropdown selectors for month/year, navigation buttons, and clickable days that update the `selected-date` attribute.
+
+- 🗓️ **Adjacent month days**  
+  Empty slots in the calendar are filled with dates from previous/next month, styled differently and highlighted on hover.
+
+---
+
+## 🔧 Installation
+
+```bash
+git clone https://github.com/your-username/custom_calendar.git
+```
+
+Then open `index.html` in your browser.
+
+---
+
+## ⚙️ Configuration
+
+### 📌 Language
+
+```html
+<div class="calendar" data-lang="en"></div>
+```
+
+**en.json**
+```json
+{
+  "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+  "weekdays": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+  "dateFormat": "MM dd, yyyy"
+}
+```
+
+### 🎨 Theme
+
+```html
+<div class="calendar" data-theme="light"></div>
+```
+
+**light.json**
+```json
+{
+  "dropdownBackground": "#fff",
+  "dropdownTextColor": "#000",
+  "dropdownHoverBackground": "#eee",
+  "cellHoverOutlineColor": "#ffcc00",
+  "otherMonthOutlineColor": "#ccc"
+}
+```
+
+---
+
+## 🚀 Usage
+
+1. Set `data-lang` and `data-theme` on the `.calendar` container.
+2. Click month or year to open dropdown and select.
+3. Click on a day to update the `selected-date`.
+4. Hover effects for outside-month days use `otherMonthOutlineColor`.
+
+---
+
+## 👨‍💻 Author
+
+This project is **open-source** and freely modifiable.  
+Feel free to contribute or open an **issue** if you encounter bugs or have suggestions.
+
+---
